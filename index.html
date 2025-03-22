@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Trainer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #f4f4f4, #e0e0e0);
+            transition: background 0.3s, color 0.3s;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            transition: box-shadow 0.3s, border 0.3s;
+            border: 2px solid #ddd;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        #timer, #stats, #bestScore, #accuracy, #errorCount, #points {
+            font-size: 18px;
+            margin-top: 10px;
+            color: #333;
+        }
+        #textDisplay {
+            font-size: 20px;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #f8f8f8;
+            border-radius: 5px;
+            color: #333;
+            border: 2px solid #ddd;
+        }
+        #inputField {
+            width: 100%;
+            padding: 10px;
+            font-size: 18px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            outline: none;
+            color: #333;
+            background: white;
+            margin-bottom: 10px;
+            transition: border-color 0.3s;
+        }
+        .night-mode {
+            background: linear-gradient(135deg, #1e1e1e, #121212);
+            color: white;
+        }
+        .night-mode .container {
+            background: #333;
+            box-shadow: 0 0 15px 5px rgba(0, 123, 255, 0.6);
+            border: 2px solid #007BFF;
+        }
+        .night-mode h1, .night-mode #timer, .night-mode #stats,
+        .night-mode #bestScore, .night-mode #accuracy, .night-mode #errorCount, .night-mode #points {
+            color: white;
+        }
+        .night-mode #textDisplay {
+            background: #444;
+            color: white;
+            border: 2px solid #007BFF;
+        }
+        .night-mode #inputField {
+            background: #444;
+            color: white;
+            border: 2px solid #007BFF;
+        }
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s, border 0.3s;
+        }
+        .start-btn {
+            background: #007BFF;
+            color: white;
+        }
+        .reset-btn {
+            background: #DC3545;
+            color: white;
+        }
+        .mode-btn, .difficulty-btn, .language-btn, .login-btn, .signup-btn, .logout-btn, .time-challenge-btn {
+            background: #6C757D;
+            color: white;
+            position: absolute;
+            top: 10px;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+        .mode-btn {
+            right: 10px;
+        }
+        .difficulty-btn {
+            right: 120px;
+        }
+        .language-btn {
+            right: 230px;
+        }
+        .login-btn {
+            right: 340px;
+        }
+        .signup-btn {
+            right: 450px;
+        }
+        .logout-btn {
+            right: 340px;
+            display: none;
+        }
+        .time-challenge-btn {
+            right: 560px;
+        }
+        .dropdown {
+            display: none;
+            position: absolute;
+            top: 40px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+        .dropdown button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            text-align: left;
+            background: white;
+            color: #333;
+            border: none;
+            border-radius: 0;
+        }
+        .dropdown button:hover {
+            background: #f4f4f4;
+        }
+        .night-mode .dropdown {
+            background: #333;
+            border-color: #007BFF;
+        }
+        .night-mode .dropdown button {
+            background: #333;
+            color: white;
+        }
+        .night-mode .dropdown button:hover {
+            background: #444;
+        }
+        #loginPopup, #signupPopup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            z-index: 2;
+        }
+        #loginPopup input, #signupPopup input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        #loginPopup button, #signupPopup button {
+            width: 100%;
+            padding: 10px;
+            background: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .night-mode #loginPopup, .night-mode #signupPopup {
+            background: #333;
+            border-color: #007BFF;
+        }
+        .night-mode #loginPopup input, .night-mode #signupPopup input {
+            background: #444;
+            color: white;
+            border-color: #007BFF;
+        }
+        #progress {
+            margin-top: 20px;
+            text-align: left;
+        }
+        #progress h2 {
+            font-size: 20px;
+            color: #333;
+        }
+        .night-mode #progress h2 {
+            color: white;
+        }
+        #progress ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        #progress li {
+            font-size: 16px;
+            margin: 5px 0;
+            color: #333;
+        }
+        .night-mode #progress li {
+            color: white;
+        }
+        /* تذييل الصفحة */
+        footer {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            color: #333;
+            text-align: center;
+        }
+        .night-mode footer {
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <button class="mode-btn" onclick="toggleNightMode()">🌙</button>
+    <button class="difficulty-btn" onclick="toggleDropdown('difficultyDropdown')">مستوى الصعوبة</button>
+    <div class="dropdown" id="difficultyDropdown">
+        <button onclick="setDifficulty('easy')">سهل</button>
+        <button onclick="setDifficulty('medium')">متوسط</button>
+        <button onclick="setDifficulty('hard')">صعب</button>
+    </div>
+    <button class="language-btn" onclick="toggleDropdown('languageDropdown')">اختر اللغة</button>
+    <div class="dropdown" id="languageDropdown">
+        <button onclick="setLanguage('ar')">عربي</button>
+        <button onclick="setLanguage('en')">English</button>
+    </div>
+    <button class="login-btn" onclick="showLoginPopup()">تسجيل الدخول</button>
+    <button class="signup-btn" onclick="showSignupPopup()">إنشاء حساب</button>
+    <button class="logout-btn" onclick="logout()">تسجيل الخروج</button>
+    <button class="time-challenge-btn" onclick="startTimeChallenge()">التحدي الزمني (30 ثانية)</button>
+    <div id="loginPopup">
+        <h2>تسجيل الدخول</h2>
+        <input type="text" id="username" placeholder="اسم المستخدم">
+        <input type="password" id="password" placeholder="كلمة المرور">
+        <button onclick="login()">دخول</button>
+    </div>
+    <div id="signupPopup">
+        <h2>إنشاء حساب</h2>
+        <input type="text" id="signupUsername" placeholder="اسم المستخدم">
+        <input type="email" id="signupEmail" placeholder="البريد الإلكتروني">
+        <input type="password" id="signupPassword" placeholder="كلمة المرور">
+        <button onclick="signup()">إنشاء حساب</button>
+    </div>
+    <div class="container">
+        <h1>Typing Trainer</h1>
+        <p id="timer">وقت متبقٍ: 60 ثانية</p>
+        <p id="textDisplay"></p>
+        <input type="text" id="inputField" disabled>
+        <button class="start-btn" onclick="startCountdown()">ابدأ التمرين</button>
+        <button class="reset-btn" onclick="resetTest()">إعادة المحاولة</button>
+        <p id="stats"></p>
+        <p id="accuracy"></p>
+        <p id="errorCount"></p>
+        <p id="bestScore"></p>
+        <p id="points">النقاط: 0</p>
+        <div id="progress">
+            <h2>التقدم السابق</h2>
+            <ul id="progressList"></ul>
+        </div>
+    </div>
+
+    <!-- تذييل الصفحة -->
+    <footer>
+        تم برمجة الموقع من قبل المبرمج فارس هاني
+    </footer>
+
+    <script>
+        const textSamples = {
+            ar: {
+                easy: ["هذا اختبار سهل"],
+                medium: ["تحسين سرعة الطباعة يحتاج إلى تدريب مستمر"],
+                hard: ["أثناء الكتابة، يظهر معدل الكلمات في الدقيقة لحظيًا دون انتظار نهاية الاختبار"]
+            },
+            en: {
+                easy: ["This is an easy test"],
+                medium: ["Improving typing speed requires continuous practice"],
+                hard: ["While typing, the words per minute rate appears instantly without waiting for the end of the test"]
+            }
+        };
+        let startTime, textToType, timerInterval, timeLeft = 60, errors = 0;
+        let difficulty = "easy"; // المستوى الافتراضي
+        let language = "ar"; // اللغة الافتراضية
+        let isLoggedIn = false; // حالة تسجيل الدخول
+        let points = 0; // النقاط
+
+        // تحميل التقدم السابق عند فتح الصفحة
+        let progress = JSON.parse(localStorage.getItem("progress")) || [];
+        document.getElementById("progressList").innerHTML = progress
+            .map((result, index) => `<li>${index + 1}: ${result.wpm} WPM (الدقة: ${result.accuracy}%)</li>`)
+            .join("");
+
+        function startCountdown() {
+            let countdown = 3;
+            document.getElementById("timer").textContent = `ابدأ خلال: ${countdown}`;
+            let countdownInterval = setInterval(() => {
+                countdown--;
+                if (countdown > 0) {
+                    document.getElementById("timer").textContent = `ابدأ خلال: ${countdown}`;
+                } else {
+                    clearInterval(countdownInterval);
+                    startTest();
+                }
+            }, 1000);
+        }
+
+        function startTest() {
+            textToType = textSamples[language][difficulty][Math.floor(Math.random() * textSamples[language][difficulty].length)];
+            document.getElementById("textDisplay").textContent = textToType;
+            document.getElementById("inputField").value = "";
+            document.getElementById("inputField").disabled = false;
+            document.getElementById("inputField").style.borderColor = "#ddd";
+            document.getElementById("stats").textContent = "";
+            document.getElementById("accuracy").textContent = "";
+            document.getElementById("errorCount").textContent = "";
+            document.getElementById("inputField").focus();
+            startTime = new Date().getTime();
+            updateTimer();
+            clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function startTimeChallenge() {
+            timeLeft = 30; // تحديث الوقت إلى 30 ثانية
+            startTest();
+        }
+
+        function updateTimer() {
+            if (timeLeft > 0) {
+                timeLeft--;
+                document.getElementById("timer").textContent = `وقت متبقٍ: ${timeLeft} ثانية`;
+            } else {
+                clearInterval(timerInterval);
+                document.getElementById("inputField").disabled = true;
+                calculateResults();
+            }
+        }
+
+        document.getElementById("inputField").addEventListener("input", function() {
+            const typedText = this.value;
+            if (!textToType.startsWith(typedText)) {
+                this.style.borderColor = "red";
+                errors++;
+            } else {
+                this.style.borderColor = "#007BFF";
+            }
+
+            if (typedText === textToType) {
+                clearInterval(timerInterval);
+                document.getElementById("inputField").disabled = true;
+                calculateResults();
+            }
+        });
+
+        function calculateResults() {
+            const endTime = new Date().getTime();
+            const timeTaken = (endTime - startTime) / 1000 / 60;
+            const wordsPerMinute = Math.round((textToType.split(" ").length) / timeTaken);
+            const accuracy = (100 - (errors / textToType.length) * 100).toFixed(2);
+            document.getElementById("stats").textContent = `سرعة الكتابة: ${wordsPerMinute} كلمة في الدقيقة`;
+            document.getElementById("accuracy").textContent = `الدقة: ${accuracy}%`;
+            document.getElementById("errorCount").textContent = `عدد الأخطاء: ${errors}`;
+            updatePoints(wordsPerMinute, accuracy);
+            saveBestScore(wordsPerMinute);
+            saveProgress(wordsPerMinute, accuracy);
+        }
+
+        function updatePoints(wpm, accuracy) {
+            points += Math.round(wpm * (accuracy / 100)); // زيادة النقاط بناءً على السرعة والدقة
+            document.getElementById("points").textContent = `النقاط: ${points}`;
+        }
+
+        function saveBestScore(wpm) {
+            let bestScore = localStorage.getItem("bestWPM") || 0;
+            if (wpm > bestScore) {
+                localStorage.setItem("bestWPM", wpm);
+                document.getElementById("bestScore").textContent = `🎉 رقم قياسي جديد: ${wpm} كلمة في الدقيقة!`;
+            }
+        }
+
+        function saveProgress(wpm, accuracy) {
+            progress.push({ wpm, accuracy });
+            localStorage.setItem("progress", JSON.stringify(progress));
+            document.getElementById("progressList").innerHTML = progress
+                .map((result, index) => `<li>${index + 1}: ${result.wpm} WPM (الدقة: ${result.accuracy}%)</li>`)
+                .join("");
+        }
+
+        function resetTest() {
+            clearInterval(timerInterval);
+            document.getElementById("timer").textContent = "وقت متبقٍ: 60 ثانية";
+            document.getElementById("textDisplay").textContent = "";
+            document.getElementById("inputField").value = "";
+            document.getElementById("inputField").disabled = true;
+            document.getElementById("stats").textContent = "";
+            document.getElementById("accuracy").textContent = "";
+            document.getElementById("errorCount").textContent = "";
+            document.getElementById("inputField").style.borderColor = "#ddd";
+        }
+
+        function toggleNightMode() {
+            document.body.classList.toggle("night-mode");
+        }
+
+        function toggleDropdown(dropdownId) {
+            const dropdown = document.getElementById(dropdownId);
+            dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+        }
+
+        function setDifficulty(level) {
+            difficulty = level;
+            document.getElementById("difficultyDropdown").style.display = "none";
+        }
+
+        function setLanguage(lang) {
+            language = lang;
+            document.getElementById("languageDropdown").style.display = "none";
+        }
+
+        function showLoginPopup() {
+            document.getElementById("loginPopup").style.display = "block";
+            document.getElementById("signupPopup").style.display = "none";
+        }
+
+        function showSignupPopup() {
+            document.getElementById("signupPopup").style.display = "block";
+            document.getElementById("loginPopup").style.display = "none";
+        }
+
+        function login() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            if (username && password) {
+                alert(`مرحبًا ${username}! تم تسجيل الدخول بنجاح.`);
+                document.getElementById("loginPopup").style.display = "none";
+                isLoggedIn = true;
+                updateLoginButtons();
+            } else {
+                alert("يرجى إدخال اسم المستخدم وكلمة المرور.");
+            }
+        }
+
+        function signup() {
+            const username = document.getElementById("signupUsername").value;
+            const email = document.getElementById("signupEmail").value;
+            const password = document.getElementById("signupPassword").value;
+            if (username && email && password) {
+                alert(`مرحبًا ${username}! تم إنشاء الحساب بنجاح.`);
+                document.getElementById("signupPopup").style.display = "none";
+                isLoggedIn = true;
+                updateLoginButtons();
+            } else {
+                alert("يرجى ملء جميع الحقول.");
+            }
+        }
+
+        function logout() {
+            isLoggedIn = false;
+            updateLoginButtons();
+            alert("تم تسجيل الخروج بنجاح.");
+        }
+
+        function updateLoginButtons() {
+            if (isLoggedIn) {
+                document.querySelector(".login-btn").style.display = "none";
+                document.querySelector(".signup-btn").style.display = "none";
+                document.querySelector(".logout-btn").style.display = "block";
+            } else {
+                document.querySelector(".login-btn").style.display = "block";
+                document.querySelector(".signup-btn").style.display = "block";
+                document.querySelector(".logout-btn").style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
